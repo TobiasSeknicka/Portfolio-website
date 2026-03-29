@@ -736,6 +736,8 @@
     duration: 1.4,
     easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
+    smoothTouch: true,
+    touchMultiplier: 1.5,
   });
   // Critical sync: Lenis notifies ScrollTrigger of every scroll event
   lenis.on('scroll', ScrollTrigger.update);
