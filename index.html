@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Think Forward® Summit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        maxWidth: { '8xl': '1440px' },
+        colors: {
+          purple: { DEFAULT: '#7b50ad', light: '#d6b3ff', dark: '#5c3a87' },
+          dark: { DEFAULT: '#0a0a0a', card: '#111111', border: '#1e1e1e' },
+        },
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        letterSpacing: { tight: '-0.03em', tighter: '-0.05em' },
+      }
+    }
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: auto; }
+  body { font-family: 'Inter', sans-serif; background: #fff; color: #000; margin: 0; }
+
+  /* NAV */
+  nav { position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: transparent; }
+  nav .nav-link { font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.9s ease; }
+  nav .nav-link:hover { color: #fff; transition: color 0.2s ease; }
+  .btn-book { color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.9s ease; }
+  .btn-book:hover { color: #fff; transition: color 0.2s ease; }
+
+  /* HERO */
+  .hero { min-height: 100vh; background: #0a0a0a; position: relative; overflow: hidden; }
+  .hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-badge { background: #7b50ad; color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; display: inline-block; }
+
+  /* STATS */
+  .stats-section { background: #0a0a0a; border-top: 1px solid #1e1e1e; }
+  .stat-divider:not(:last-child) { border-right: 1px solid #1e1e1e; }
+
+  /* WHAT TO EXPECT */
+  .expect-card { border: 1px solid #e4e4e7; border-radius: 16px; transition: border-color 0.25s, box-shadow 0.25s; }
+  .expect-card:hover { border-color: #7b50ad; box-shadow: 0 4px 32px rgba(123,80,173,0.12); }
+
+  /* SPEAKERS */
+  .speakers-section { background: #0a0a0a; }
+  .speaker-card { position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; }
+  .speaker-card img { width: 100%; height: 340px; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .speaker-card:hover img { transform: scale(1.04); }
+  .speaker-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%); }
+  .speaker-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; }
+
+  /* AGENDA */
+  .agenda-section { background: #fff; }
+  .agenda-day-tab { border-bottom: 2px solid transparent; transition: border-color 0.2s, color 0.2s; cursor: pointer; }
+  .agenda-day-tab.active { border-color: #7b50ad; color: #7b50ad; }
+  .agenda-row { border-bottom: 1px solid #e4e4e7; }
+  .agenda-row:last-child { border-bottom: none; }
+  .agenda-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+  .tag-keynote { background: #f0e6ff; color: #7b50ad; }
+  .tag-workshop { background: #e6f0ff; color: #2563eb; }
+  .tag-panel { background: #e6fff0; color: #16a34a; }
+  .tag-networking { background: #fff7e6; color: #d97706; }
+
+  /* TESTIMONIALS */
+  .testimonials-section { background: #f9f9f9; }
+
+  /* TICKETS */
+  .tickets-section { background: #0a0a0a; }
+  .ticket-card { border: 1px solid #1e1e1e; border-radius: 20px; transition: border-color 0.25s, transform 0.25s; }
+  .ticket-card:hover { border-color: #7b50ad; transform: translateY(-4px); }
+  .ticket-card.featured { border-color: #7b50ad; background: #0f0a17; }
+  .ticket-divider { border-top: 1px solid #1e1e1e; }
+
+  /* FAQ */
+  .faq-section { background: #fff; }
+  .faq-item { border-bottom: 1px solid #e4e4e7; }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); }
+  .faq-answer.open { max-height: 200px; }
+  .faq-chevron { transition: transform 0.3s; }
+  .faq-chevron.open { transform: rotate(180deg); }
+
+  /* FOOTER */
+  .footer-link { transition: color 0.9s ease; }
+  .footer-link:hover { color: rgba(255,255,255,1) !important; transition: color 0.2s ease; }
+
+  /* SHINY OUTLINE BUTTON */
+  .shiny-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.55);
+    border-radius: 9999px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 14px 56px;
+    cursor: pointer;
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.9s ease, text-shadow 0.9s ease;
+  }
+  /* diagonal shine — bottom-right → top-left */
+  .shiny-btn::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -60%;
+    width: 35%;
+    height: 220%;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255,255,255,0.52) 50%,
+      transparent 100%
+    );
+    transform: rotate(-45deg) translateX(320%);
+    pointer-events: none;
+  }
+  .shiny-btn:hover {
+    border-color: rgba(255,255,255,0.8);
+    text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.3);
+    transition: border-color 0.2s ease, text-shadow 0.2s ease;
+  }
+  .shiny-btn:hover::before {
+    animation: shine-diag 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes shine-diag {
+    to { transform: rotate(-45deg) translateX(-320%); }
+  }
+
+  /* CTA BUTTON */
+  .btn-primary { background: #7b50ad; color: #fff; border-radius: 100px; font-weight: 600; font-size: 14px; padding: 13px 28px; display: inline-block; cursor: pointer; transition: background 0.2s, transform 0.15s; border: none; }
+  .btn-primary:hover { background: #8f63c5; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-outline { border: 1px solid rgba(255,255,255,0.25); color: #fff; border-radius: 100px; font-weight: 500; font-size: 14px; padding: 12px 28px; display: inline-block; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: transparent; }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
+
+  /* SPONSOR */
+  .sponsor-logo { filter: brightness(0) invert(0.4); transition: filter 0.25s; }
+  .sponsor-logo:hover { filter: brightness(0) invert(1); }
+
+  /* PORTFOLIO CARDS */
+  .portfolio-card {
+    position: relative; cursor: pointer;
+    aspect-ratio: 16/9; background: #111;
+    clip-path: inset(0 round 10px);
+  }
+  .portfolio-card img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .portfolio-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(241,149,74,0.38);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .portfolio-card:hover::after { opacity: 1; transition: opacity 0.2s ease; }
+
+  /* APPROACH CARDS */
+  .approach-card {
+    transition: background 0.9s ease, box-shadow 0.9s ease;
+  }
+  .approach-card:hover {
+    background: #222 !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 8px 24px rgba(241,149,74,0.15), 0 0 0 1px rgba(241,149,74,0.2);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .approach-card h3 { transition: color 0.9s ease; }
+  .approach-card:hover h3 { color: #F1954A; transition: color 0.2s ease; }
+
+
+/* SUBTLE LINK HOVER */
+  .subtle-link { transition: color 0.9s ease; }
+  .subtle-link:hover { transition: color 0.2s ease; }
+
+  /* CTR HOVER GLOW */
+  .ctr-after {
+    transition: text-shadow 0.9s ease;
+  }
+  .results-row:hover .ctr-after {
+    text-shadow: 0 0 24px rgba(241,149,74,0.55), 0 0 48px rgba(241,149,74,0.2);
+    transition: text-shadow 0.2s ease;
+  }
+
+  /* SCROLL ANIMATIONS — initial states set by JS only */
+  .fade-up {}
+  .fade-in {}
+  .stagger-child {}
+
+  /* ── MOBILE RESPONSIVE ────────────────────────────────────────── */
+  @media (max-width: 767px) {
+
+    /* Hero */
+    .hero h1 { font-size: 52px !important; letter-spacing: -0.03em !important; }
+    .hero-content > p { font-size: 18px !important; max-width: 100% !important; }
+
+    /* Section headings */
+    #portfolio h2,
+    #results h2,
+    #approach h2 { font-size: 48px !important; }
+
+    /* Section padding */
+    #portfolio { padding-top: 60px !important; padding-bottom: 48px !important; }
+    #results   { padding-top: 60px !important; padding-bottom: 60px !important; }
+    #approach  { padding-top: 60px !important; padding-bottom: 72px !important; }
+
+    /* Portfolio/Results/Approach header — allow wrapping */
+    #portfolio .flex.items-baseline.justify-between,
+    #results   .flex.items-baseline.justify-between,
+    #approach  .flex.items-baseline.justify-between { flex-wrap: wrap; gap: 4px; }
+
+    /* Results rows — stack vertically */
+    .results-row {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 16px;
+    }
+    .results-row > div > p:first-child { font-size: 36px !important; }
+    .results-row > div.text-right      { text-align: left !important; }
+
+    /* Approach cards — remove forced tall height */
+    .approach-card { min-height: 220px !important; }
+
+    /* CTA section */
+    #cta-footer h2        { font-size: 52px !important; }
+    #cta-content > p      { font-size: 18px !important; max-width: 100% !important; }
+    #cta-content          { padding: 60px 24px !important; }
+
+    /* Shiny button */
+    .shiny-btn {
+      font-size: 20px !important;
+      padding: 12px 36px !important;
+    }
+
+    /* Footer links — smaller gap on mobile */
+    #cta-footer-bar .flex.items-center { gap: 20px !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO (nav is inside so it moves with hero as one unit) -->
+<section class="hero flex flex-col items-center justify-center text-center" style="padding: 0 24px; position: relative; z-index: 1; overflow: hidden;">
+
+  <!-- NAV — inside hero, absolute to its top -->
+  <nav id="navbar" class="px-8 md:px-14" style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; padding-top: 30px; padding-bottom: 30px;">
+    <div class="max-w-8xl mx-auto flex items-center justify-between">
+      <div class="hidden md:flex items-center gap-10">
+        <a href="#portfolio" class="nav-link text-white/60">Portfolio</a>
+        <a href="#results" class="nav-link text-white/60">Results</a>
+        <a href="#approach" class="nav-link text-white/60">Approach</a>
+      </div>
+      <button id="hamburger" class="md:hidden text-white p-2" aria-label="Menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+      <a href="#cta-footer" class="btn-book hidden md:inline-block">Book a call</a>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden px-2 pt-4 pb-4 space-y-2">
+      <a href="#portfolio" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Portfolio</a>
+      <a href="#results" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Results</a>
+      <a href="#approach" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Approach</a>
+      <a href="#cta-footer" class="btn-book inline-block mt-2">Book a call</a>
+    </div>
+  </nav>
+  <canvas id="hero-canvas" class="hero-canvas"></canvas>
+  <div class="hero-content w-full max-w-8xl mx-auto px-8 md:px-14">
+    <h1 class="text-white leading-none mb-6 fade-up" style="font-size: 168px; font-weight: 600; letter-spacing: -0.04em;">
+      Stop leaving<br>growth behind
+    </h1>
+    <p class="fade-up" style="font-size: 24px; font-weight: 400; line-height: 1.65; max-width: 560px; margin: 0 auto; color: #F1954A;">
+      Thumbnail design &amp; strategy for creators who are serious about results and design.
+    </p>
+  </div>
+</section>
+
+<!-- MID SECTIONS WRAPPER (scrolls over hero + CTA) -->
+<div id="mid-wrap" style="position: relative; z-index: 10;">
+
+<!-- PORTFOLIO -->
+<section id="portfolio" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 80px;">
+  <div class="max-w-8xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-baseline justify-between mb-12">
+      <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;">Portfolio</h2>
+      <p class="text-white/60 hidden md:block fade-up" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.4;">Some of what I've made.</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 1" />
+      </div>
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail2.jpg" alt="Project 2" />
+      </div>
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail3.jpg" alt="Project 3" />
+      </div>
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail4.jpg" alt="Project 4" />
+      </div>
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 5" />
+      </div>
+      <div class="portfolio-card stagger-child">
+
+        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 6" />
+      </div>
+    </div>
+
+    <!-- See more -->
+    <div class="mt-4 fade-up">
+      <a href="#" class="subtle-link" style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#fff';this.style.transition='color 0.2s ease'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.transition='color 0.9s ease'">See more</a>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 96px;">
+  <div class="max-w-8xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-baseline justify-between mb-10 fade-up">
+      <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;">Results</h2>
+      <p class="text-white/60 hidden md:block" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em;">Real channels. Real impact.</p>
+    </div>
+
+    <!-- Divider -->
+    <div style="border-top: 1px solid rgba(255,255,255,0.12);"></div>
+
+    <!-- Row 1 -->
+    <div class="results-row flex items-center justify-between py-8 fade-up" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+      <div>
+        <p class="text-white font-bold" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1;">3.9 % CTR <span style="font-weight:300; color: #F1954A;">→</span></p>
+        <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
+      </div>
+      <div class="text-right">
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">9.0 % CTR</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="results-row flex items-center justify-between py-8 fade-up" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+      <div>
+        <p class="text-white font-bold" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1;">4.6 % CTR <span style="font-weight:300; color: #F1954A;">→</span></p>
+        <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
+      </div>
+      <div class="text-right">
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">8.0 % CTR</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+      </div>
+    </div>
+
+    <!-- Row 3 — highlighted with blue underline -->
+    <div class="results-row flex items-center justify-between py-8 fade-up" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+      <div>
+        <p class="text-white font-bold" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1;">3.5 % CTR <span style="font-weight:300; color: #F1954A;">→</span></p>
+        <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
+      </div>
+      <div class="text-right">
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">6.6 % CTR</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section id="approach" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 106px;">
+  <div class="max-w-8xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-baseline justify-between mb-12 fade-up">
+      <h2 class="text-white" style="font-size: 110px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;">Approach</h2>
+      <p class="text-white/60 hidden md:block" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em;">How good thumbnails get made.</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+      <!-- Card 1 -->
+      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+        <div class="flex items-start justify-between mb-8">
+          <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Research</h3>
+          <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">01</span>
+        </div>
+        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">I study your channel and what's already working, and where the opportunity is for this specific video.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+        <div class="flex items-start justify-between mb-8">
+          <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Concept</h3>
+          <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">02</span>
+        </div>
+        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">The design exists as a sketch before it exists on screen. Composition, hierarchy, message, all decided first.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+        <div class="flex items-start justify-between mb-8">
+          <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Design</h3>
+          <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">03</span>
+        </div>
+        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">Only now I open the software. Every decision from the previous steps drives what gets built.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+        <div class="flex items-start justify-between mb-8">
+          <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Delivery</h3>
+          <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">04</span>
+        </div>
+        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">Clean files, fast turnaround, and as many revisions as it takes. I'm not done until you're happy with the result.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+</div><!-- /mid-wrap -->
+
+<!-- CTA + FOOTER — pod mid-wrapem (z:1), overflow:hidden kvůli parallax room -->
+<section id="cta-footer" style="position: relative; z-index: 1; min-height: 67vh; background: #0a0a0a; display: flex; flex-direction: column; overflow: hidden;">
+
+  <canvas id="cta-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block;"></canvas>
+
+  <!-- CTA obsah — relativní, jede stejným parallax offsetem -->
+  <div id="cta-content" style="position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px;">
+    <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 20px;">Ready to grow?</h2>
+    <p class="fade-up" style="font-size: 24px; font-weight: 400; line-height: 1.65; max-width: 500px; margin-bottom: 40px; color: #F1954A;">Book a free 15-minute call and let's see if we're a good fit.</p>
+    <a href="https://calendly.com/seknicka-tobias/15min" target="_blank" rel="noopener noreferrer" class="shiny-btn fade-up">→ Book a call</a>
+  </div>
+
+  <!-- Footer bar -->
+  <div id="cta-footer-bar" style="position: relative; z-index: 1; padding: 30px 0;" class="px-8 md:px-14">
+    <div class="max-w-8xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <p style="font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.6);">TOBIASH.DESIGN © 2026</p>
+      <div class="flex items-center gap-8">
+        <a href="https://www.instagram.com/tobiash.design?igsh=NjNzNzduZm42Mmcw&utm_source=qr" target="_blank" class="footer-link" style="font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.6);">Instagram</a>
+        <a href="https://x.com/tobiashdesign?s=21a" target="_blank" class="footer-link" style="font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.6);">Twitter</a>
+        <a href="mailto:seknicka.tobias@gmail.com" class="footer-link" style="font-size: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.6);">Email</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── HERO WAVE — WebGL fragment shader (GPU, fully smooth) ─────────
+  (function () {
+    const canvas = document.getElementById('hero-canvas');
+
+    // Try WebGL2 first, fall back to WebGL1
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    if (!gl) return; // browser doesn't support WebGL — canvas stays hidden
+
+    // ── Shaders ────────────────────────────────────────────────────
+    const vertSrc = `
+      attribute vec2 a_pos;
+      void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+    `;
+
+    const fragSrc = `
+      precision highp float;
+      uniform vec2  u_res;
+      uniform float u_time;
+
+      void main() {
+        vec2 uv = (2.0 * gl_FragCoord.xy - u_res) / u_res.y;
+
+        float a = 0.0;
+        float d = 0.0;
+
+        for (int i = 0; i < 4; i++) {
+          float fi = float(i);
+          a += cos(fi - d + u_time * 0.5 - a * uv.x);
+          d += sin(fi * uv.y + a);
+        }
+
+        float wave      = (sin(a) + cos(d)) * 0.5;
+        float intensity = 0.3 + 0.4 * wave;
+        float base      = 0.1 + 0.15 * cos(uv.x + uv.y + u_time * 0.3);
+
+        // Dark navy base color added to all pixels
+        vec3 navy = vec3(0.005, 0.01, 0.05);
+
+        // Warm accent signals
+        float orangeAcc = 0.20 * sin(a * 1.5 + u_time * 0.2);
+        float yellowAcc = 0.15 * cos(d * 2.0  + u_time * 0.1);
+        float redAcc    = 0.12 * sin(d * 1.2  - u_time * 0.15);
+
+        // R is the master channel — always dominant
+        float r = clamp(base + orangeAcc * 0.9 + redAcc * 0.7, 0.0, 1.0) * intensity;
+        // G is always a fixed fraction of R — guarantees orange, never green
+        float g = r * 0.38 + yellowAcc * 0.04 * intensity;
+        // B stays near zero
+        float b = r * 0.04;
+
+        // Subtle cream highlight on brightest peaks
+        float peak = smoothstep(0.72, 0.95, wave * 0.5 + 0.5);
+        r += peak * 0.06;
+        g += peak * 0.03;
+        b += peak * 0.01;
+
+        gl_FragColor = vec4(clamp(r + navy.r, 0.0, 1.0), clamp(g + navy.g, 0.0, 1.0), clamp(b + navy.b, 0.0, 1.0), 1.0);
+      }
+    `;
+
+    // ── Compile shaders ────────────────────────────────────────────
+    const compile = (type, src) => {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER,   vertSrc));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    // ── Full-screen quad ───────────────────────────────────────────
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER,
+      new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+    const loc = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes  = gl.getUniformLocation(prog, 'u_res');
+    const uTime = gl.getUniformLocation(prog, 'u_time');
+
+    // ── Resize ─────────────────────────────────────────────────────
+    const resize = () => {
+      const section = canvas.parentElement;
+      canvas.width  = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ── Render loop ────────────────────────────────────────────────
+    const startTime = performance.now();
+    const render = () => {
+      gl.uniform1f(uTime, (performance.now() - startTime) * 0.001);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(render);
+    };
+    render();
+  })();
+
+  // ── CTA SECTION WAVE — same shader as hero ────────────────────────
+  (function () {
+    const canvas = document.getElementById('cta-canvas');
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    if (!gl) return;
+
+    const vertSrc = `attribute vec2 a_pos; void main(){gl_Position=vec4(a_pos,0.,1.);}`;
+    const fragSrc = `
+      precision highp float;
+      uniform vec2 u_res; uniform float u_time;
+      void main(){
+        vec2 uv=(2.*gl_FragCoord.xy-u_res)/u_res.y;
+        float a=0.,d=0.;
+        for(int i=0;i<4;i++){float fi=float(i);a+=cos(fi-d+u_time*.5-a*uv.x);d+=sin(fi*uv.y+a);}
+        float wave=(sin(a)+cos(d))*.5;
+        float intensity=.3+.4*wave;
+        float base=.1+.15*cos(uv.x+uv.y+u_time*.3);
+        float orangeAcc=.20*sin(a*1.5+u_time*.2);
+        float yellowAcc=.15*cos(d*2.+u_time*.1);
+        float redAcc=.12*sin(d*1.2-u_time*.15);
+        float r=clamp(base+orangeAcc*.9+redAcc*.7,0.,1.)*intensity;
+        float g=r*.38+yellowAcc*.04*intensity;
+        float b=r*.04;
+        float peak=smoothstep(.72,.95,wave*.5+.5);
+        r+=peak*.06; g+=peak*.03; b+=peak*.01;
+        vec3 navy=vec3(.005,.01,.05);
+        gl_FragColor=vec4(clamp(r+navy.r,0.,1.),clamp(g+navy.g,0.,1.),clamp(b+navy.b,0.,1.),1.);
+      }
+    `;
+    const compile = (type, src) => { const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(prog); gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog,'a_pos');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    const uRes=gl.getUniformLocation(prog,'u_res'), uTime=gl.getUniformLocation(prog,'u_time');
+    const resize=()=>{ const s=canvas.parentElement; canvas.width=s.offsetWidth; canvas.height=s.offsetHeight; gl.viewport(0,0,canvas.width,canvas.height); gl.uniform2f(uRes,canvas.width,canvas.height); };
+    window.addEventListener('resize',resize); resize();
+    const t0=performance.now();
+    const render=()=>{ gl.uniform1f(uTime,(performance.now()-t0)*.001); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); requestAnimationFrame(render); };
+    render();
+  })();
+
+  // ── PORTFOLIO CARD HOVER — removed, replaced by CSS ─────────────
+  (function () {
+    // legacy placeholder — no longer needed
+    return;
+    const vertSrc = `UNUSED`;
+    const fragSrc = `
+      UNUSED
+        for (int i = 0; i < 4; i++) {
+          float fi = float(i);
+          a += cos(fi - d + u_time * 0.32 - a * uv.x);
+          d += sin(fi * uv.y + a);
+        }
+        float wave = (sin(a) + cos(d)) * 0.5;
+        float t    = wave * 0.5 + 0.5;
+        vec3 void_     = vec3(0.00, 0.00, 0.05);
+        vec3 midnight  = vec3(0.01, 0.02, 0.10);
+        vec3 deepBlue  = vec3(0.02, 0.04, 0.18);
+        vec3 cognac    = vec3(0.28, 0.09, 0.01);
+        vec3 amber     = vec3(0.75, 0.28, 0.04);
+        vec3 luxOrange = vec3(0.97, 0.55, 0.12);
+        vec3 orangeCol = mix(cognac, amber, smoothstep(0.0, 0.5, t));
+             orangeCol = mix(orangeCol, luxOrange, smoothstep(0.5, 1.0, t));
+        vec3 col = void_;
+        col = mix(col, midnight,  smoothstep(0.00, 0.20, t));
+        col = mix(col, deepBlue,  smoothstep(0.18, 0.60, t));
+        col = mix(col, cognac,    smoothstep(0.72, 0.84, t));
+        col = mix(col, orangeCol, smoothstep(0.82, 0.98, t));
+        col += deepBlue * (1.0 - smoothstep(0.75, 0.98, t)) * 0.6;
+        float shimmer = smoothstep(0.91, 0.99, t) * max(0.0, sin(a * 3.0 + u_time * 0.25)) * 0.18;
+        col += vec3(0.98, 0.82, 0.40) * shimmer;
+        float intensity = 0.08 + 0.88 * (t * t);
+        col *= intensity;
+        gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+      }
+    `;
+
+    const makeProgram = (gl) => {
+      const compile = (type, src) => {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src); gl.compileShader(s); return s;
+      };
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+      gl.linkProgram(prog);
+      return prog;
+    };
+
+    document.querySelectorAll('.portfolio-card').forEach(card => {
+      const canvas = card.querySelector('.pf-canvas');
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      if (!gl) return;
+
+      const prog = makeProgram(gl);
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      const uRes  = gl.getUniformLocation(prog, 'u_res');
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+
+      let animId = null;
+      let startTime = null;
+      let active = false;
+
+      const resize = () => {
+        canvas.width  = card.offsetWidth;
+        canvas.height = card.offsetHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+      };
+
+      const render = (ts) => {
+        if (!startTime) startTime = ts;
+        gl.uniform1f(uTime, (ts - startTime) * 0.001);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        if (active) animId = requestAnimationFrame(render);
+      };
+
+      card.addEventListener('mouseenter', () => {
+        active = true;
+        resize();
+        startTime = null;
+        animId = requestAnimationFrame(render);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        active = false;
+        if (animId) cancelAnimationFrame(animId);
+      });
+    });
+  })();
+
+  // ── Lenis smooth scroll ────────────────────────────────────────────
+  const lenis = new Lenis({
+    duration: 1.4,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
+  // Critical sync: Lenis notifies ScrollTrigger of every scroll event
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(time => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+  // Smooth anchor link scrolling through Lenis
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;
+    a.addEventListener('click', e => {
+      const target = document.querySelector(href);
+      if (target) { e.preventDefault(); lenis.scrollTo(target, { duration: 1.6, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }); }
+    });
+  });
+
+  // GSAP + ScrollTrigger setup
+  gsap.registerPlugin(ScrollTrigger);
+
+
+  // Mobile menu
+  document.getElementById('hamburger').addEventListener('click', () => {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+  });
+
+  // Skrýt všechny non-hero animované elementy okamžitě před prvním renderem
+  gsap.set('#mid-wrap .fade-up, #mid-wrap .stagger-child, #cta-footer .fade-up, #cta-footer .stagger-child', { opacity: 0 });
+
+  // Hero animations (on load)
+  gsap.timeline({ delay: 0.15 })
+    .from('.hero .fade-in', { opacity: 0, duration: 0.6, ease: 'power2.out' })
+    .from('.hero .fade-up', { opacity: 0, y: 56, duration: 1.0, stagger: 0.15, ease: 'power4.out' }, '-=0.3');
+
+  // ScrollTrigger: animace per sekce — fromTo() nastaví počáteční stav okamžitě (žádný flash)
+  document.querySelectorAll('#mid-wrap section, #cta-footer').forEach(section => {
+    const fadeEls = gsap.utils.toArray(section.querySelectorAll('.fade-up'));
+    if (fadeEls.length > 0) {
+      gsap.fromTo(fadeEls,
+        { opacity: 0, y: 36 },
+        {
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' },
+          opacity: 1, y: 0, duration: 1.6, stagger: 0.1, ease: 'power3.out'
+        }
+      );
+    }
+    const staggerEls = gsap.utils.toArray(section.querySelectorAll('.stagger-child'));
+    if (staggerEls.length > 0) {
+      gsap.fromTo(staggerEls,
+        { opacity: 0, y: 28 },
+        {
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' },
+          opacity: 1, y: 0, duration: 1.5, stagger: 0.1, ease: 'power3.out'
+        }
+      );
+    }
+  });
+
+  // ── Portfolio card image zoom (GSAP — bypasses injected extension transitions) ──
+  document.querySelectorAll('.portfolio-card').forEach(card => {
+    const img = card.querySelector('img');
+    if (!img) return;
+    card.addEventListener('mouseenter', () => {
+      gsap.to(img, { scale: 1.05, duration: 0.2, ease: 'power2.out' });
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(img, { scale: 1, duration: 0.9, ease: 'power2.out' });
+    });
+  });
+
+  // ── Parallax ───────────────────────────────────────────────────────
+  // Hero: nav je uvnitř hero sekce → pohybuje se automaticky s ní.
+  // Obsah hero jedou na ~55% rychlosti (canvas + content posunuty dolů
+  // o 45% výšky hero, takže čistý pohyb nahoru = 55% místo 100%).
+  const heroEl = document.querySelector('.hero');
+  const heroH  = heroEl.offsetHeight;
+  gsap.to(['.hero-content', '#hero-canvas', '#navbar'], {
+    y: heroH * 0.25,
+    ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+
+  // CTA parallax — asymetrický fromTo: y=0 přesně při max scrollu (kdy sekce nejvíc vyplňuje viewport).
+  // Progress při max scrollu = ctaH/(ctaH+vH). Pro y=0: B = A*(vH/ctaH).
+  const ctaEl = document.querySelector('#cta-footer');
+  const ctaH  = ctaEl.offsetHeight;
+  const vH    = window.innerHeight;
+  const ctaA  = ctaH * 0.25;
+  const ctaB  = vH * 0.25;
+  gsap.fromTo(['#cta-content', '#cta-footer-bar'],
+    { y: -ctaA },
+    { y: ctaB, ease: 'none',
+      scrollTrigger: { trigger: '#cta-footer', start: 'top bottom', end: 'bottom top', scrub: true }
+    }
+  );
+
+
+  // Agenda tabs
+  const tabs = document.querySelectorAll('.agenda-day-tab');
+  const day1 = document.getElementById('day-1-content');
+  const day2 = document.getElementById('day-2-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('active'); t.classList.add('text-zinc-400'); t.classList.remove('text-zinc-800'); });
+      tab.classList.add('active');
+      tab.classList.remove('text-zinc-400');
+
+      const day = tab.dataset.day;
+      if (day === '1') {
+        day1.classList.remove('hidden');
+        day2.classList.add('hidden');
+      } else {
+        day2.classList.remove('hidden');
+        day1.classList.add('hidden');
+      }
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const chevron = item.querySelector('.faq-chevron');
+      const isOpen = answer.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-chevron').forEach(c => c.classList.remove('open'));
+
+      if (!isOpen) {
+        answer.classList.add('open');
+        chevron.classList.add('open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
