@@ -159,6 +159,15 @@
   .sponsor-logo:hover { filter: brightness(0) invert(1); }
 
   /* PORTFOLIO CARDS */
+  .portfolio-wrap {
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(241,149,74,0);
+    transition: box-shadow 0.9s ease;
+  }
+  .portfolio-wrap:hover {
+    box-shadow: 0 0 0 1px rgba(241,149,74,0.2);
+    transition: box-shadow 0.2s ease;
+  }
   .portfolio-card {
     position: relative; cursor: pointer;
     aspect-ratio: 16/9; background: #111;
@@ -176,14 +185,14 @@
     pointer-events: none;
     z-index: 1;
   }
-  .portfolio-card:hover::after { opacity: 1; transition: opacity 0.2s ease; }
+  .portfolio-wrap:hover .portfolio-card::after { opacity: 1; transition: opacity 0.2s ease; }
 
   /* APPROACH CARDS */
   .approach-card {
     transition: background 0.9s ease, box-shadow 0.9s ease;
   }
   .approach-card:hover {
-    background: #222 !important;
+    background: #19191f !important;
     box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 8px 24px rgba(241,149,74,0.15), 0 0 0 1px rgba(241,149,74,0.2);
     transition: background 0.2s ease, box-shadow 0.2s ease;
   }
@@ -210,11 +219,15 @@
   .stagger-child {}
 
   /* ── MOBILE RESPONSIVE ────────────────────────────────────────── */
+  .portfolio-extra { display: block; }
   @media (max-width: 767px) {
+    .portfolio-extra { display: none; }
+    .portfolio-extra.visible { display: block; }
 
     /* Hero */
-    .hero h1 { font-size: 74px !important; letter-spacing: -0.03em !important; }
+    .hero h1 { font-size: 80px !important; letter-spacing: -0.03em !important; }
     .hero-content > p { font-size: 18px !important; max-width: 100% !important; }
+    .hero-content { padding-top: 90px !important; }
 
     /* Section headings */
     #portfolio h2,
@@ -256,6 +269,7 @@
 
     /* Footer links — smaller gap on mobile */
     #cta-footer-bar .flex.items-center { gap: 20px !important; }
+    #cta-footer-bar a, #cta-footer-bar p { font-weight: 400 !important; font-size: 14px !important; }
   }
 </style>
 </head>
@@ -279,20 +293,20 @@
       </button>
       <a href="#cta-footer" class="btn-book hidden md:inline-block">Book a call</a>
     </div>
-    <div id="mobile-menu" class="hidden md:hidden px-2 pt-4 pb-4 space-y-2">
-      <a href="#portfolio" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Portfolio</a>
-      <a href="#results" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Results</a>
-      <a href="#approach" class="block text-white/70 font-semibold tracking-widest uppercase py-2" style="font-size:16px;">Approach</a>
-      <a href="#cta-footer" class="btn-book inline-block mt-2">Book a call</a>
+    <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3" style="text-align: left;">
+      <a href="#portfolio" class="block text-left text-white/70 tracking-widest uppercase py-1" style="font-size:14px; font-weight:400;">Portfolio</a>
+      <a href="#results" class="block text-left text-white/70 tracking-widest uppercase py-1" style="font-size:14px; font-weight:400;">Results</a>
+      <a href="#approach" class="block text-left text-white/70 tracking-widest uppercase py-1" style="font-size:14px; font-weight:400;">Approach</a>
+      <a href="#cta-footer" class="btn-book block mt-2" style="font-size:14px; font-weight:400;">Book a call</a>
     </div>
   </nav>
   <canvas id="hero-canvas" class="hero-canvas"></canvas>
   <div class="hero-content w-full max-w-8xl mx-auto px-8 md:px-14">
-    <h1 class="text-white leading-none mb-6 fade-up" style="font-size: 168px; font-weight: 600; letter-spacing: -0.04em;">
-      Stop leaving<br>growth behind
+    <h1 class="text-white leading-none mb-6 fade-up" style="font-size: 220px; font-weight: 600; letter-spacing: -0.04em;">
+      Own the feed
     </h1>
-    <p class="fade-up" style="font-size: 24px; font-weight: 400; line-height: 1.65; max-width: 560px; margin: 0 auto; color: #F1954A;">
-      Thumbnail design &amp; strategy for creators who are serious about results and design.
+    <p class="fade-up" style="font-size: 28px; font-weight: 400; line-height: 1.65; max-width: 560px; margin: 0 auto; color: #F1954A;">
+      With thumbnails that earn the clicks.
     </p>
   </div>
 </section>
@@ -301,52 +315,34 @@
 <div id="mid-wrap" style="position: relative; z-index: 10;">
 
 <!-- PORTFOLIO -->
-<section id="portfolio" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 80px;">
+<section id="portfolio" class="px-8 md:px-14" style="background:#01020D; padding-top: 96px; padding-bottom: 80px;">
   <div class="max-w-8xl mx-auto">
 
     <!-- Header -->
     <div class="flex items-baseline justify-between mb-12">
       <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;">Portfolio</h2>
-      <p class="text-white/60 hidden md:block fade-up" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.4;">Some of what I've made.</p>
+      <p class="text-white/60 hidden md:block fade-up" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.4;">A selection of recent work.</p>
     </div>
 
     <!-- Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 1" />
-      </div>
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail2.jpg" alt="Project 2" />
-      </div>
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail3.jpg" alt="Project 3" />
-      </div>
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail4.jpg" alt="Project 4" />
-      </div>
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 5" />
-      </div>
-      <div class="portfolio-card stagger-child">
-
-        <img src="/Thumbnails/Thumbnail.jpg" alt="Project 6" />
-      </div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail.jpg" alt="Project 1" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail2.jpg" alt="Project 2" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail3.jpg" alt="Project 3" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail4.jpg" alt="Project 4" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail.jpg" alt="Project 5" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail.jpg" alt="Project 6" /></div></div>
     </div>
 
     <!-- See more -->
     <div class="mt-4 fade-up">
-      <a href="#" class="subtle-link" style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#fff';this.style.transition='color 0.2s ease'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.transition='color 0.9s ease'">See more</a>
+      <a id="see-more-btn" href="#" class="subtle-link" style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#fff';this.style.transition='color 0.2s ease'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.transition='color 0.9s ease'">See more</a>
     </div>
   </div>
 </section>
 
 <!-- RESULTS -->
-<section id="results" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 96px;">
+<section id="results" class="px-8 md:px-14" style="background:#01020D; padding-top: 96px; padding-bottom: 96px;">
   <div class="max-w-8xl mx-auto">
 
     <!-- Header -->
@@ -398,20 +394,20 @@
 </section>
 
 <!-- APPROACH -->
-<section id="approach" class="px-8 md:px-14" style="background:#0A0A0A; padding-top: 96px; padding-bottom: 106px;">
+<section id="approach" class="px-8 md:px-14" style="background:#01020D; padding-top: 96px; padding-bottom: 106px;">
   <div class="max-w-8xl mx-auto">
 
     <!-- Header -->
     <div class="flex items-baseline justify-between mb-12 fade-up">
       <h2 class="text-white" style="font-size: 110px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;">Approach</h2>
-      <p class="text-white/60 hidden md:block" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em;">How good thumbnails get made.</p>
+      <p class="text-white/60 hidden md:block" style="font-size: 48px; font-weight: 500; letter-spacing: -0.03em;">The process behind the results.</p>
     </div>
 
     <!-- Cards grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 
       <!-- Card 1 -->
-      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+      <div class="approach-card stagger-child" style="background:#121217; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
         <div class="flex items-start justify-between mb-8">
           <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Research</h3>
           <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">01</span>
@@ -420,7 +416,7 @@
       </div>
 
       <!-- Card 2 -->
-      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+      <div class="approach-card stagger-child" style="background:#121217; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
         <div class="flex items-start justify-between mb-8">
           <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Concept</h3>
           <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">02</span>
@@ -429,7 +425,7 @@
       </div>
 
       <!-- Card 3 -->
-      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
+      <div class="approach-card stagger-child" style="background:#121217; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 550px;">
         <div class="flex items-start justify-between mb-8">
           <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Design</h3>
           <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">03</span>
@@ -438,12 +434,12 @@
       </div>
 
       <!-- Card 4 -->
-      <div class="approach-card stagger-child" style="background:#1a1a1a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+      <div class="approach-card stagger-child" style="background:#121217; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
         <div class="flex items-start justify-between mb-8">
           <h3 class="text-white font-semibold" style="font-size: 28px; letter-spacing: -0.03em;">Delivery</h3>
           <span style="font-size: 16px; font-weight: 600; color: #F1954A; letter-spacing: 0.05em;">04</span>
         </div>
-        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">Clean files, fast turnaround, and as many revisions as it takes. I'm not done until you're happy with the result.</p>
+        <p class="text-white/50" style="font-size: 16px; line-height: 1.65;">Clean files, fast turnaround, and as many revisions as it takes.</p>
       </div>
 
     </div>
@@ -460,8 +456,8 @@
 
   <!-- CTA obsah — relativní, jede stejným parallax offsetem -->
   <div id="cta-content" style="position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px;">
-    <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 20px;">Ready to grow?</h2>
-    <p class="fade-up" style="font-size: 24px; font-weight: 400; line-height: 1.65; max-width: 500px; margin-bottom: 40px; color: #F1954A;">Book a free 15-minute call and let's see if we're a good fit.</p>
+    <h2 class="text-white fade-up" style="font-size: 110px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 20px;">Ready to start?</h2>
+    <p class="fade-up" style="font-size: 24px; font-weight: 400; line-height: 1.65; max-width: 500px; margin-bottom: 40px; color: #F1954A;">Book a 15-minute call and let's see<br>if we're a good fit.</p>
     <a href="https://calendly.com/seknicka-tobias/15min" target="_blank" rel="noopener noreferrer" class="shiny-btn fade-up">→ Book a call</a>
   </div>
 
@@ -763,6 +759,17 @@
     menu.classList.toggle('hidden');
   });
 
+  // See more — na mobilu zobraz skryté fotky
+  document.getElementById('see-more-btn').addEventListener('click', e => {
+    if (window.innerWidth >= 768) return;
+    e.preventDefault();
+    const extras = document.querySelectorAll('.portfolio-extra');
+    const isHidden = !extras[0].classList.contains('visible');
+    extras.forEach(el => el.classList.toggle('visible', isHidden));
+    const btn = document.getElementById('see-more-btn');
+    btn.textContent = isHidden ? 'See less' : 'See more';
+  });
+
   // Skrýt všechny non-hero animované elementy okamžitě před prvním renderem
   gsap.set('#mid-wrap .fade-up, #mid-wrap .stagger-child, #cta-footer .fade-up, #cta-footer .stagger-child', { opacity: 0 });
 
@@ -796,13 +803,13 @@
   });
 
   // ── Portfolio card image zoom (GSAP — bypasses injected extension transitions) ──
-  document.querySelectorAll('.portfolio-card').forEach(card => {
-    const img = card.querySelector('img');
+  document.querySelectorAll('.portfolio-wrap').forEach(wrap => {
+    const img = wrap.querySelector('img');
     if (!img) return;
-    card.addEventListener('mouseenter', () => {
+    wrap.addEventListener('mouseenter', () => {
       gsap.to(img, { scale: 1.05, duration: 0.2, ease: 'power2.out' });
     });
-    card.addEventListener('mouseleave', () => {
+    wrap.addEventListener('mouseleave', () => {
       gsap.to(img, { scale: 1, duration: 0.9, ease: 'power2.out' });
     });
   });
