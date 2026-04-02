@@ -283,8 +283,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 24px;
+    overflow-y: auto;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -292,7 +293,7 @@
     -webkit-backdrop-filter: blur(14px);
   }
   #graph-overlay.active { opacity: 1; pointer-events: all; }
-  .graph-overlay-inner { width: 100%; max-width: 960px; }
+  .graph-overlay-inner { width: 100%; max-width: 960px; margin: auto; }
   .graph-overlay-header {
     display: flex;
     align-items: center;
@@ -324,14 +325,14 @@
     gap: 14px;
   }
   @media (max-width: 640px) {
-    .graph-images-grid { grid-template-columns: 1fr; max-height: 65vh; overflow-y: auto; gap: 12px; }
+    .graph-images-grid { grid-template-columns: 1fr; gap: 12px; }
   }
   .graph-img-wrap {
     aspect-ratio: 1 / 1;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.07);
     background: #0f0a17;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 8px 24px rgba(241,149,74,0.15), 0 0 0 1px rgba(241,149,74,0.2);
     will-change: transform, opacity;
   }
   .graph-img-wrap img {
@@ -428,7 +429,7 @@
         <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
       </div>
       <div class="text-right">
-        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">9.0 % CTR</p>
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">9.1 % CTR</p>
         <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="0" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
@@ -440,7 +441,7 @@
         <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
       </div>
       <div class="text-right">
-        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">8.0 % CTR</p>
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">8.9 % CTR</p>
         <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="1" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
@@ -452,7 +453,7 @@
         <p class="text-white/30 mt-2" style="font-size: 16px;">Pre-collaboration average CTR</p>
       </div>
       <div class="text-right">
-        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">6.6 % CTR</p>
+        <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">6.7 % CTR</p>
         <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="2" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
