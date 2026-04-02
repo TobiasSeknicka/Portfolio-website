@@ -549,7 +549,7 @@
       <span id="graph-overlay-title"></span>
       <button class="graph-close-btn" id="graph-close-btn" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
@@ -985,6 +985,8 @@
     graphGrid.innerHTML = set.images.map((src, i) =>
       `<div class="graph-img-wrap"><img src="${src}" alt="Graph ${i + 1}" /></div>`
     ).join('');
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = scrollbarWidth + 'px';
     graphOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     const wraps = graphGrid.querySelectorAll('.graph-img-wrap');
@@ -1002,6 +1004,7 @@
       onComplete: () => {
         graphOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
       }
     });
   }
