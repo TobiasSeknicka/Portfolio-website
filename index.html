@@ -848,7 +848,13 @@
     e.preventDefault();
     const extras = document.querySelectorAll('.portfolio-extra');
     const isHidden = !extras[0].classList.contains('visible');
-    extras.forEach(el => el.classList.toggle('visible', isHidden));
+    extras.forEach(el => {
+      el.classList.toggle('visible', isHidden);
+      if (isHidden) {
+        el.style.pointerEvents = 'none';
+        setTimeout(() => { el.style.pointerEvents = ''; }, 600);
+      }
+    });
     const btn = document.getElementById('see-more-btn');
     btn.textContent = isHidden ? 'See less' : 'See more';
   });
