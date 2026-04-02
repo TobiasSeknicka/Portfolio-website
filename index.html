@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="dark" />
-<meta name="theme-color" content="#0a0a0a" />
+<meta name="theme-color" content="#01020D" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>tobiash.design</title>
 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -854,6 +854,7 @@
       if (isHidden) {
         el.style.pointerEvents = 'none';
         setTimeout(() => { el.style.pointerEvents = ''; }, 600);
+        gsap.fromTo(el, { opacity: 0, y: 56 }, { opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: 'power4.out' });
       }
     });
     const btn = document.getElementById('see-more-btn');
