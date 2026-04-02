@@ -273,6 +273,73 @@
     #cta-footer-bar a, #cta-footer-bar p { font-weight: 400 !important; font-size: 14px !important; }
     #cta-footer-bar { padding-top: 0 !important; }
   }
+
+  /* GRAPH LIGHTBOX */
+  #graph-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(1,2,13,0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  #graph-overlay.active { opacity: 1; pointer-events: all; }
+  .graph-overlay-inner { width: 100%; max-width: 960px; }
+  .graph-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .graph-overlay-title {
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .graph-close-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    flex-shrink: 0;
+  }
+  .graph-close-btn:hover { border-color: rgba(255,255,255,0.5); color: #fff; background: rgba(255,255,255,0.06); }
+  .graph-images-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .graph-images-grid { grid-template-columns: 1fr; max-height: 65vh; overflow-y: auto; gap: 12px; }
+  }
+  .graph-img-wrap {
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: #0f0a17;
+    will-change: transform, opacity;
+  }
+  .graph-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .graph-img-wrap:hover img { transform: scale(1.04); }
 </style>
 </head>
 <body>
@@ -364,7 +431,7 @@
       </div>
       <div class="text-right">
         <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">9.0 % CTR</p>
-        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="0" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
 
@@ -376,7 +443,7 @@
       </div>
       <div class="text-right">
         <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">8.0 % CTR</p>
-        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="1" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
 
@@ -388,7 +455,7 @@
       </div>
       <div class="text-right">
         <p class="font-bold ctr-after" style="font-size: 64px; letter-spacing: -0.04em; line-height: 1; color: #F1954A;">6.6 % CTR</p>
-        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" style="font-size: 16px;">View graphs</p>
+        <p class="subtle-link text-white/30 mt-2 hover:text-white/60 cursor-pointer" data-graphs="2" style="font-size: 16px;">View graphs</p>
       </div>
     </div>
 
@@ -475,6 +542,21 @@
     </div>
   </div>
 </section>
+
+<!-- GRAPH LIGHTBOX OVERLAY -->
+<div id="graph-overlay">
+  <div class="graph-overlay-inner">
+    <div class="graph-overlay-header">
+      <span id="graph-overlay-title"></span>
+      <button class="graph-close-btn" id="graph-close-btn" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="graph-images-grid" id="graph-images-grid"></div>
+  </div>
+</div>
 
 <script>
   // ── HERO WAVE — WebGL fragment shader (GPU, fully smooth) ─────────
@@ -865,6 +947,73 @@
     });
   });
 
+  // Graph lightbox
+  const graphOverlay = document.getElementById('graph-overlay');
+  const graphCloseBtn = document.getElementById('graph-close-btn');
+  const graphGrid = document.getElementById('graph-images-grid');
+  const graphTitle = document.getElementById('graph-overlay-title');
+
+  const graphSets = [
+    {
+      title: 'Campaign 1 — 9.0% CTR',
+      images: [
+        '/Graphs/Results1.jpg',
+        '/Graphs/Results2.jpg',
+        '/Graphs/Results3.jpg',
+      ]
+    },
+    {
+      title: 'Campaign 2 — 8.0% CTR',
+      images: [
+        '/Graphs/Results4.jpg',
+        '/Graphs/Results5.jpg',
+        '/Graphs/Results6.jpg',
+      ]
+    },
+    {
+      title: 'Campaign 3 — 6.6% CTR',
+      images: [
+        '/Graphs/Results7.jpg',
+        '/Graphs/Results8.jpg',
+        '/Graphs/Results9.jpg',
+      ]
+    }
+  ];
+
+  function openGraphs(index) {
+    const set = graphSets[index];
+    graphTitle.textContent = set.title;
+    graphGrid.innerHTML = set.images.map((src, i) =>
+      `<div class="graph-img-wrap"><img src="${src}" alt="Graph ${i + 1}" /></div>`
+    ).join('');
+    graphOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    const wraps = graphGrid.querySelectorAll('.graph-img-wrap');
+    gsap.fromTo(wraps,
+      { opacity: 0, y: 56, scale: 0.86, rotationZ: (i) => (i - 1) * 4 },
+      { opacity: 1, y: 0, scale: 1, rotationZ: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }
+    );
+  }
+
+  function closeGraphs() {
+    const wraps = graphGrid.querySelectorAll('.graph-img-wrap');
+    gsap.to(wraps, {
+      opacity: 0, y: 30, scale: 0.9,
+      duration: 0.3, stagger: 0.06, ease: 'power2.in',
+      onComplete: () => {
+        graphOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
+  document.querySelectorAll('[data-graphs]').forEach(btn => {
+    btn.addEventListener('click', () => openGraphs(+btn.dataset.graphs));
+  });
+  graphCloseBtn.addEventListener('click', closeGraphs);
+  graphOverlay.addEventListener('click', e => { if (e.target === graphOverlay) closeGraphs(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && graphOverlay.classList.contains('active')) closeGraphs(); });
+
   // FAQ accordion
   document.querySelectorAll('.faq-trigger').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -884,5 +1033,6 @@
     });
   });
 </script>
+
 </body>
 </html>
