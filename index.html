@@ -400,11 +400,14 @@
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail8.jpg" alt="Project 3" /></div></div>
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/ThumbnailB.jpg" alt="Project 4" /></div></div>
       <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail9.jpg" alt="Project 5" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail7.jpg" alt="Project 6" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail10.jpg" alt="Project 6" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail6.jpg" alt="Project 7" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail7.jpg" alt="Project 8" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail4.jpg" alt="Project 9" /></div></div>
     </div>
 
     <!-- See more -->
-    <div class="mt-4 fade-up md:hidden">
+    <div class="mt-4 fade-up">
       <a id="see-more-btn" href="#" class="subtle-link" style="font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#fff';this.style.transition='color 0.2s ease'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.transition='color 0.9s ease'">See more</a>
     </div>
   </div>
@@ -843,9 +846,8 @@
     menu.classList.toggle('hidden');
   });
 
-  // See more — na mobilu zobraz skryté fotky
+  // See more — zobraz skryté fotky
   document.getElementById('see-more-btn').addEventListener('click', e => {
-    if (window.innerWidth >= 768) return;
     e.preventDefault();
     const extras = document.querySelectorAll('.portfolio-extra');
     const isHidden = !extras[0].classList.contains('visible');
