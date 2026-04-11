@@ -222,6 +222,12 @@
   /* ── MOBILE RESPONSIVE ────────────────────────────────────────── */
   .portfolio-extra { display: none; }
   .portfolio-extra.visible { display: block; }
+  .portfolio-md-show { display: block; }
+  .portfolio-md-show.visible { display: block; }
+  @media (max-width: 767px) {
+    .portfolio-md-show { display: none; }
+    .portfolio-md-show.visible { display: block; }
+  }
   @media (max-width: 767px) {
 
     /* Hero */
@@ -394,15 +400,18 @@
 
     <!-- Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
+      <!-- Always visible: 4 on mobile, 4 on desktop -->
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail.jpg" alt="Project 1" /></div></div>
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail5.jpg" alt="Project 2" /></div></div>
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail8.jpg" alt="Project 3" /></div></div>
       <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/ThumbnailB.jpg" alt="Project 4" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail9.jpg" alt="Project 5" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail10.jpg" alt="Project 6" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail3.jpg" alt="Project 7" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail7.jpg" alt="Project 8" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail4.jpg" alt="Project 9" /></div></div>
+      <!-- Visible on desktop by default, hidden on mobile until See more -->
+      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail9.jpg" alt="Project 5" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail7.jpg" alt="Project 6" /></div></div>
+      <!-- Hidden everywhere until See more -->
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail2.jpg" alt="Project 7" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail4.jpg" alt="Project 8" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail3.jpg" alt="Project 9" /></div></div>
     </div>
 
     <!-- See more -->
@@ -849,15 +858,32 @@
   document.getElementById('see-more-btn').addEventListener('click', e => {
     e.preventDefault();
     const extras = document.querySelectorAll('.portfolio-extra');
+    const mdShow = document.querySelectorAll('.portfolio-md-show');
+    const isMobile = window.innerWidth < 768;
     const isHidden = !extras[0].classList.contains('visible');
+
+    // Na mobilu zobraz i portfolio-md-show skupinu
+    const toAnimate = [];
+    if (isMobile) {
+      mdShow.forEach(el => {
+        el.classList.toggle('visible', isHidden);
+        if (isHidden) toAnimate.push(el);
+      });
+    }
     extras.forEach(el => {
       el.classList.toggle('visible', isHidden);
-      if (isHidden) {
-        el.style.pointerEvents = 'none';
-        setTimeout(() => { el.style.pointerEvents = ''; }, 600);
-        gsap.fromTo(el, { opacity: 0, y: 56 }, { opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: 'power4.out' });
-      }
+      if (isHidden) toAnimate.push(el);
     });
+
+    if (isHidden && toAnimate.length) {
+      toAnimate.forEach(el => { el.style.pointerEvents = 'none'; });
+      setTimeout(() => toAnimate.forEach(el => { el.style.pointerEvents = ''; }), 600);
+      gsap.fromTo(toAnimate,
+        { opacity: 0, y: 56 },
+        { opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: 'power4.out' }
+      );
+    }
+
     const btn = document.getElementById('see-more-btn');
     btn.textContent = isHidden ? 'See less' : 'See more';
   });
