@@ -862,30 +862,39 @@
     const isMobile = window.innerWidth < 768;
     const isHidden = !extras[0].classList.contains('visible');
 
-    // Na mobilu zobraz i portfolio-md-show skupinu
-    const toAnimate = [];
-    if (isMobile) {
-      mdShow.forEach(el => {
-        el.classList.toggle('visible', isHidden);
-        if (isHidden) toAnimate.push(el);
-      });
-    }
-    extras.forEach(el => {
-      el.classList.toggle('visible', isHidden);
-      if (isHidden) toAnimate.push(el);
-    });
+    const btn = document.getElementById('see-more-btn');
 
-    if (isHidden && toAnimate.length) {
+    if (isHidden) {
+      // Otevírací animace
+      const toAnimate = [];
+      if (isMobile) {
+        mdShow.forEach(el => { el.classList.add('visible'); toAnimate.push(el); });
+      }
+      extras.forEach(el => { el.classList.add('visible'); toAnimate.push(el); });
       toAnimate.forEach(el => { el.style.pointerEvents = 'none'; });
       setTimeout(() => toAnimate.forEach(el => { el.style.pointerEvents = ''; }), 600);
       gsap.fromTo(toAnimate,
         { opacity: 0, y: 56 },
         { opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: 'power4.out' }
       );
+      btn.textContent = 'See less';
+    } else {
+      // Zavírací animace
+      const toHide = [...(isMobile ? Array.from(mdShow) : []), ...Array.from(extras)];
+      toHide.forEach(el => { el.style.pointerEvents = 'none'; });
+      gsap.to(toHide, {
+        opacity: 0, y: 30, scale: 0.9,
+        duration: 0.3, stagger: 0.06, ease: 'power2.in',
+        onComplete: () => {
+          toHide.forEach(el => {
+            el.classList.remove('visible');
+            el.style.pointerEvents = '';
+            gsap.set(el, { clearProps: 'all' });
+          });
+        }
+      });
+      btn.textContent = 'See more';
     }
-
-    const btn = document.getElementById('see-more-btn');
-    btn.textContent = isHidden ? 'See less' : 'See more';
   });
 
   // Skrýt všechny non-hero animované elementy okamžitě před prvním renderem
