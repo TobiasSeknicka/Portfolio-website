@@ -302,12 +302,13 @@
     padding: 24px;
     overflow-y: auto;
     opacity: 0;
+    visibility: hidden; /* zavřený overlay se vůbec nevykresluje (blur je drahý) */
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
-  #graph-overlay.active { opacity: 1; pointer-events: all; }
+  #graph-overlay.active { opacity: 1; visibility: visible; pointer-events: all; transition: opacity 0.3s ease, visibility 0s; }
   .graph-overlay-inner { width: 100%; max-width: 960px; margin: auto; }
   .graph-overlay-header {
     display: flex;
@@ -411,20 +412,20 @@
     <!-- Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="portfolio-grid">
       <!-- Always visible: 4 on mobile, 4 on desktop -->
-      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail.jpg" alt="Project 1" /></div></div>
-      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail16.jpg" alt="Project 2" /></div></div>
-      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail15.jpg" alt="Project 3" /></div></div>
-      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail5.jpg" alt="Project 4" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail.jpg" alt="Project 1" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail16.jpg" alt="Project 2" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail15.jpg" alt="Project 3" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail5.jpg" alt="Project 4" decoding="async" /></div></div>
       <!-- Visible on desktop by default, hidden on mobile until See more -->
-      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail14.jpg" alt="Project 5" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail12.jpg" alt="Project 6" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail14.jpg" alt="Project 5" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-md-show"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail12.jpg" alt="Project 6" decoding="async" /></div></div>
       <!-- Hidden everywhere until See more -->
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail18.jpg" alt="Project 7" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail17.jpg" alt="Project 8" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail8.jpg" alt="Project 9" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail9.jpg" alt="Project 10" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail13.jpg" alt="Project 11" /></div></div>
-      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/Thumbnail10.jpg" alt="Project 12" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail18.jpg" alt="Project 7" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail17.jpg" alt="Project 8" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail8.jpg" alt="Project 9" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail9.jpg" alt="Project 10" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail13.jpg" alt="Project 11" decoding="async" /></div></div>
+      <div class="portfolio-wrap stagger-child portfolio-extra"><div class="portfolio-card"><img src="/Thumbnails/web/Thumbnail10.jpg" alt="Project 12" decoding="async" /></div></div>
     </div>
 
     <!-- See more -->
@@ -583,6 +584,23 @@
 </div>
 
 <script>
+  // ── Pomocník: rAF smyčka, která běží jen když je element na obrazovce
+  //    a karta prohlížeče je aktivní (šetří GPU → plynulejší scroll) ─────
+  function runWhenVisible(el, draw) {
+    let inView = true, rafId = null;
+    const loop = () => { draw(); rafId = requestAnimationFrame(loop); };
+    const update = () => {
+      const shouldRun = inView && !document.hidden;
+      if (shouldRun && rafId === null) loop();
+      else if (!shouldRun && rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+    };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => { inView = entries[0].isIntersecting; update(); }).observe(el);
+    }
+    document.addEventListener('visibilitychange', update);
+    update();
+  }
+
   // ── HERO WAVE — WebGL fragment shader (GPU, fully smooth) ─────────
   (function () {
     const canvas = document.getElementById('hero-canvas');
@@ -672,22 +690,23 @@
     // ── Resize ─────────────────────────────────────────────────────
     const resize = () => {
       const section = canvas.parentElement;
-      canvas.width  = section.offsetWidth;
-      canvas.height = section.offsetHeight;
+      const w = section.offsetWidth, h = section.offsetHeight;
+      if (w === canvas.width && h === canvas.height) return; // nic se nezměnilo → nealokovat znovu
+      canvas.width  = w;
+      canvas.height = h;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
     };
     window.addEventListener('resize', resize);
     resize();
 
-    // ── Render loop ────────────────────────────────────────────────
+    // ── Render loop (běží jen když je canvas vidět) ────────────────
     const startTime = performance.now();
-    const render = () => {
+    const draw = () => {
       gl.uniform1f(uTime, (performance.now() - startTime) * 0.001);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      requestAnimationFrame(render);
     };
-    render();
+    runWhenVisible(canvas, draw);
   })();
 
   // ── CTA SECTION WAVE — same shader as hero ────────────────────────
@@ -730,11 +749,11 @@
     const loc = gl.getAttribLocation(prog,'a_pos');
     gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
     const uRes=gl.getUniformLocation(prog,'u_res'), uTime=gl.getUniformLocation(prog,'u_time');
-    const resize=()=>{ const s=canvas.parentElement; canvas.width=s.offsetWidth; canvas.height=s.offsetHeight; gl.viewport(0,0,canvas.width,canvas.height); gl.uniform2f(uRes,canvas.width,canvas.height); };
+    const resize=()=>{ const s=canvas.parentElement; const w=s.offsetWidth, h=s.offsetHeight; if (w===canvas.width && h===canvas.height) return; canvas.width=w; canvas.height=h; gl.viewport(0,0,canvas.width,canvas.height); gl.uniform2f(uRes,canvas.width,canvas.height); };
     window.addEventListener('resize',resize); resize();
     const t0=performance.now();
-    const render=()=>{ gl.uniform1f(uTime,(performance.now()-t0)*.001); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); requestAnimationFrame(render); };
-    render();
+    const draw=()=>{ gl.uniform1f(uTime,(performance.now()-t0)*.001); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); };
+    runWhenVisible(canvas, draw);
   })();
 
   // ── PORTFOLIO CARD HOVER — removed, replaced by CSS ─────────────
@@ -884,6 +903,7 @@
         mdShow.forEach(el => { el.classList.add('visible'); toAnimate.push(el); });
       }
       extras.forEach(el => { el.classList.add('visible'); toAnimate.push(el); });
+      refreshScroll(); // stránka se prodloužila → přepočítat ScrollTrigger (jinak ujede footer)
       toAnimate.forEach(el => { el.style.pointerEvents = 'none'; });
       setTimeout(() => toAnimate.forEach(el => { el.style.pointerEvents = ''; }), 600);
       gsap.fromTo(toAnimate,
@@ -904,6 +924,7 @@
             el.style.pointerEvents = '';
             gsap.set(el, { clearProps: 'all' });
           });
+          refreshScroll(); // stránka se zkrátila → přepočítat
         }
       });
       btn.textContent = 'See more';
@@ -958,27 +979,31 @@
   // Hero: nav je uvnitř hero sekce → pohybuje se automaticky s ní.
   // Obsah hero jedou na ~55% rychlosti (canvas + content posunuty dolů
   // o 45% výšky hero, takže čistý pohyb nahoru = 55% místo 100%).
+  // Hodnoty jsou funkce + invalidateOnRefresh → přepočítají se při každém
+  // ScrollTrigger.refresh() (resize, See more, dotažené fonty/obrázky).
   const heroEl = document.querySelector('.hero');
-  const heroH  = heroEl.offsetHeight;
   gsap.to(['.hero-content', '#hero-canvas', '#navbar'], {
-    y: heroH * 0.25,
+    y: () => heroEl.offsetHeight * 0.25,
     ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true }
   });
 
   // CTA parallax — asymetrický fromTo: y=0 přesně při max scrollu (kdy sekce nejvíc vyplňuje viewport).
   // Progress při max scrollu = ctaH/(ctaH+vH). Pro y=0: B = A*(vH/ctaH).
+  // Pozor: když by se výšky nepřepočítaly (stará ctaH/vH), footer bar ujede pod okraj sekce
+  // (overflow:hidden) → není vidět a nejde na něj kliknout.
   const ctaEl = document.querySelector('#cta-footer');
-  const ctaH  = ctaEl.offsetHeight;
-  const vH    = window.innerHeight;
-  const ctaA  = ctaH * 0.25;
-  const ctaB  = vH * 0.25;
   gsap.fromTo(['#cta-content', '#cta-footer-bar'],
-    { y: -ctaA },
-    { y: ctaB, ease: 'none',
-      scrollTrigger: { trigger: '#cta-footer', start: 'top bottom', end: 'bottom top', scrub: true }
+    { y: () => -ctaEl.offsetHeight * 0.25 },
+    { y: () => window.innerHeight * 0.25, ease: 'none',
+      scrollTrigger: { trigger: '#cta-footer', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true }
     }
   );
+
+  // Přepočítat pozice, až se dotáhnou fonty a obrázky (mění výšku stránky)
+  const refreshScroll = () => { lenis.resize(); ScrollTrigger.refresh(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshScroll);
+  window.addEventListener('load', refreshScroll);
 
 
   // Agenda tabs
